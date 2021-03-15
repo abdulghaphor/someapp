@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { ThemeProvider } from "styled-components";
+import GlobalStyle from "./globals";
+import darkModeStore from "./darkModeStore";
+import { observer } from "mobx-react";
+import { Route, Switch } from "react-router";
+import Navigation from "./components/Navigation";
+import routes from "./assets/routes";
 function App() {
+  const theme = {
+    dark: {
+      backgroundColor: "black",
+      color: "white",
+    },
+    light: {
+      backgroundColor: "white",
+      color: "black",
+    },
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider
+      theme={darkModeStore.isDarkMode === true ? theme.dark : theme.light}
+    >
+      <GlobalStyle />
+      <Navigation routes={routes} />
+      <Switch>
+        {routes.map((cv) => (
+          <Route path={cv.path} exact={cv.exact ? true : false}>
+            {cv.component}
+          </Route>
+        ))}
+      </Switch>
+    </ThemeProvider>
   );
 }
 
-export default App;
+export default observer(App);
